@@ -11,9 +11,18 @@ import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import useBoolean from "hooks/useBoolean";
 import NewProductDialog from "components/NewProductDialog.react";
+import Snackbar from "@material-ui/core/Snackbar";
+import IconButton from "@material-ui/core/IconButton";
+import CloseIcon from "@material-ui/icons/Close";
 
 const useStyles = makeStyles((theme) => ({
-  addProductButton: {
+  root: {
+    width: "100%",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "start",
+  },
+  button: {
     marginBottom: theme.spacing(1),
   },
 }));
@@ -23,6 +32,11 @@ export default function OrderDetails({ order, onProductAdded }) {
     value: openDialog,
     setFalse: setOpenDialogFalse,
     setTrue: setOpenDialogTrue,
+  } = useBoolean(false);
+  const {
+    value: openSnackbar,
+    setFalse: setOpenSnackbarFalse,
+    setTrue: setOpenSnackbarTrue,
   } = useBoolean(false);
   const classes = useStyles();
   const onProductSaved = useCallback(
@@ -46,15 +60,43 @@ export default function OrderDetails({ order, onProductAdded }) {
 
   return (
     <>
-      <div>
+      <div className={classes.root}>
         <Button
           variant="contained"
           color="primary"
-          className={classes.addProductButton}
+          className={classes.button}
           onClick={setOpenDialogTrue}
         >
           Añadir nuevo producto
         </Button>
+        <Button
+          variant="contained"
+          color="primary"
+          className={classes.button}
+          onClick={setOpenSnackbarTrue}
+        >
+          Pagar
+        </Button>
+        <Snackbar
+          anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "left",
+          }}
+          open={openSnackbar}
+          autoHideDuration={3000}
+          onClose={setOpenSnackbarFalse}
+          message="Orden pagada"
+          action={
+            <IconButton
+              size="small"
+              aria-label="close"
+              color="inherit"
+              onClick={setOpenSnackbarFalse}
+            >
+              <CloseIcon fontSize="small" />
+            </IconButton>
+          }
+        />
         <Typography variant="h6" gutterBottom>
           Productos
         </Typography>
