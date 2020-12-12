@@ -39,6 +39,7 @@ export default function App() {
       if (orderId === -1) {
         return;
       }
+
       // Create a shallow copy of that order
       const orderCopy = { ...orders[orderIndex] };
       // Add the product at the front to see it more easily
@@ -51,6 +52,7 @@ export default function App() {
         orderCopy,
         ...orders.slice(orderIndex + 1),
       ]);
+      setSelectedOrder(orderCopy);
     },
     [orders]
   );

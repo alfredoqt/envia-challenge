@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import { makeStyles } from "@material-ui/core/styles";
@@ -9,6 +9,8 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
+import useBoolean from "hooks/useBoolean";
+import NewProductDialog from "components/NewProductDialog.react";
 
 const useStyles = makeStyles((theme) => ({
   addProductButton: {
@@ -17,7 +19,22 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function OrderDetails({ order, onProductAdded }) {
+  const {
+    value: openDialog,
+    setFalse: setOpenDialogFalse,
+    setTrue: setOpenDialogTrue,
+  } = useBoolean(false);
   const classes = useStyles();
+  const onProductSaved = useCallback(
+    (product) => {
+      // Handle null and undefined
+      if (order != null) {
+        setOpenDialogFalse();
+        onProductAdded(order.id, product);
+      }
+    },
+    [onProductAdded, order, setOpenDialogFalse]
+  );
   // I'm not using === to handle both undefined and null
   if (order == null) {
     return (
@@ -26,42 +43,51 @@ export default function OrderDetails({ order, onProductAdded }) {
       </Typography>
     );
   }
+
   return (
-    <div>
-      <Button
-        variant="contained"
-        color="primary"
-        className={classes.addProductButton}
-      >
-        Añadir nuevo producto
-      </Button>
-      <Typography variant="h6" gutterBottom>
-        Productos
-      </Typography>
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>SKU</TableCell>
-              <TableCell align="right">Nombre</TableCell>
-              <TableCell align="right">Cantidad</TableCell>
-              <TableCell align="right">Precio</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {order.items.map((product) => (
-              <TableRow key={product.id}>
-                <TableCell component="th" scope="row">
-                  {product.sku}
-                </TableCell>
-                <TableCell align="right">{product.name}</TableCell>
-                <TableCell align="right">{product.quantity}</TableCell>
-                <TableCell align="right">{product.price}</TableCell>
+    <>
+      <div>
+        <Button
+          variant="contained"
+          color="primary"
+          className={classes.addProductButton}
+          onClick={setOpenDialogTrue}
+        >
+          Añadir nuevo producto
+        </Button>
+        <Typography variant="h6" gutterBottom>
+          Productos
+        </Typography>
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>SKU</TableCell>
+                <TableCell align="right">Nombre</TableCell>
+                <TableCell align="right">Cantidad</TableCell>
+                <TableCell align="right">Precio</TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    </div>
+            </TableHead>
+            <TableBody>
+              {order.items.map((product) => (
+                <TableRow key={product.id}>
+                  <TableCell component="th" scope="row">
+                    {product.sku}
+                  </TableCell>
+                  <TableCell align="right">{product.name}</TableCell>
+                  <TableCell align="right">{product.quantity}</TableCell>
+                  <TableCell align="right">{product.price}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </div>
+      <NewProductDialog
+        open={openDialog}
+        onClose={setOpenDialogFalse}
+        onSave={onProductSaved}
+      />
+    </>
   );
 }
