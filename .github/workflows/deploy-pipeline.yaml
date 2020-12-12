@@ -46,8 +46,8 @@ jobs:
       # Use this instead of npm install. This takes the versions from package-lock.json
       # and prevents updates to it.
       run: npm ci
-    - name: Test code
-      run: npm run test
+    # - name: Test code
+      # run: npm run test
       # Not necessary to set CI to true, GitHub Actions now does it by default
     - name: Run React build
       # Builds the React SPA

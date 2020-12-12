@@ -12,7 +12,6 @@ Hosteada en: [Firebase Hosting](https://envia-challenge.firebaseapp.com/)
 - GitHub Action construye el proyecto y lo hostea con cada push a **main**
   - Cache Node.js modules
   - Instala dependencias
-  - Corre los tests
   - Corre el production build de React
   - Hostea en [Firebase Hosting](https://envia-challenge.firebaseapp.com/) al final
 
